@@ -3,7 +3,7 @@ const BodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 const ObjectId = require("mongodb").ObjectID;
 const cors = require('cors');
-const CONNECTION_URL = "mongodb+srv://root:pass@sandbox.e8wbs.mongodb.net/test";
+const CONNECTION_URL = "";
 const DATABASE_NAME = "user_accounts";
 const CryptoJS = require("crypto-js");
 
@@ -44,7 +44,7 @@ app.post('/register', function(request, response, next) {
     if(!request.body["username"] || !request.body["password"]) { return response.send(false); }
     // Encrypt Password //
     // https://www.npmjs.com/package/crypto-js //
-    let password = CryptoJS.AES.encrypt(request.body["password"], "asomewhatsecretkey").toString();
+    let password = CryptoJS.AES.encrypt(request.body["password"], "redacted").toString();
     let body = request.body;
     body["password"] = password;
     collection.insertOne(body, (error, result) => {
@@ -65,7 +65,7 @@ app.post('/login', function(request, response, next) {
         if(result !== null) {
             // Check the password //
             // https://www.npmjs.com/package/crypto-js //
-            var bytes  = CryptoJS.AES.decrypt(result.password, "asomewhatsecretkey");
+            var bytes  = CryptoJS.AES.decrypt(result.password, "redacted");
             if(bytes.toString(CryptoJS.enc.Utf8) === request.body["password"]) {
                 return response.send(result);
             } else {
